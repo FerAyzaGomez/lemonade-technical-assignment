@@ -4,14 +4,13 @@ package donationMethods;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import helpers.Helpers;
-import org.junit.Assert;
 
 
 public class DonationMethods {
 	Helpers helper = new Helpers();
 	
 	public void clickOnDonateButton(WebDriver driver, String text) {
-		this.helper.clickOnElementbyText(driver, text);
+		this.helper.clickOnElementbyLinkText(driver, text);
 	}
 	
 	
@@ -60,7 +59,31 @@ public class DonationMethods {
 		this.helper.clickOnElementbyId(driver, id);
 	}
 	
-	public void waitUntilErrorDonationMessageIsShown(WebDriver driver, String id) {
-		this.helper.waitUntilElementIsPresentById(driver, id);
+	public void waitUntilPaymentIsPerformed(WebDriver driver, String text) {
+		this.helper.waitUntilElementIsPresentByLinkText(driver, text);
+	}
+	
+	public void waitUntilCancellationButtonIsClickable(WebDriver driver, String id) {
+		this.helper.waitUntilElementIsClickableById(driver, id);
+	}
+	
+	public void waitUntilSubmitPaymentButtonIsClickable(WebDriver driver, String id) {
+		this.helper.waitUntilElementIsClickableById(driver, id);
+	}
+	
+	public void switchBackFromPaymentIframe(WebDriver driver) {
+		this.helper.switchBackFromIframe(driver);
+	}
+	
+	public String storePaymentReference(WebDriver driver, String xpath) {
+		return this.helper.textReaderByXpath(driver, xpath).replace("Error reference: ", "");
+	}
+	
+	public void printRefNumber (String refNum) {
+		System.out.println("Reference transaction number: "+refNum);
+	}
+	
+	public void waitAndSwitchIntoPaymentIframe(WebDriver driver, String xpath) {
+		this.helper.waitAndSwitchIntoIframe(driver, xpath);
 	}
 }

@@ -1,13 +1,8 @@
 package StepDefinitions;
 
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+import org.openqa.selenium.WebDriver;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -35,6 +30,7 @@ public class StepDefinitions {
 	String card = "4111111111111111";
 	String expiryDate ="10/22";
 	String cvv ="123";
+	String paymentReference = "";
 	
 	//Element definitions by id
 	String welcome = "mp-welcome";
@@ -60,15 +56,20 @@ public class StepDefinitions {
 	String expiryDateField = "expiryDate";
 	String cvvField = "cvv";
 	String submitDonationButton = "primaryButton";
-	String paymentErrorMessage = "cardNumber-error";
+	String cancellationButton = "secondaryButton";
 	
-	//Element definitions by xpah
+	
+	//Element definitions by xpath
 	String loginErrorMessage = "//div[@class='errorbox']";
 	String creditCardButton = "//div[@class='payment-method-div monthly-capable paymentmethod-cc cctypes-vmaj']";
+	String referenceNumber = "//div[@id='mw-content-text']//p[3]";
+	String paymentErrorMessage = "//div[@id='mw-content-text']";
+	String paymentIframe = "//iframe[@name='ingenico-iFrame']";
 	
 	
-	//Element definitions by contained text
+	//Element definitions by Link contained text
 	String donationLink = "Donate";
+	String tryAgain = "try again";
 	
 	@Given("the Wikipedia main page \\(english)")
 	public void the_wikipedia_main_page_english() {
@@ -162,8 +163,6 @@ public class StepDefinitions {
 		this.helper.closeDriver(this.driver);
 	}
 	
-	
-	//--------------------------------------
 
 	@Given("the user clicks on the Donate button")
 	public void the_user_clicks_on_the_donate_button() {
@@ -204,26 +203,23 @@ public class StepDefinitions {
 		this.donationMethods.fillTextBox(this.driver, this.paymentLastName, this.lastName);
 		this.donationMethods.fillTextBox(this.driver, this.paymentEmail, this.email);
 		this.donationMethods.clickOnVisaButton(this.driver, this.visaButton);
-		
-		WebDriverWait wait = new WebDriverWait(driver, 50);
-		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath("//iframe[@name='ingenico-iFrame']")));
-		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@id='secondaryButton']")));
-		
-		
-		
-		this.donationMethods.waitUntilCreditCardIsLoaded(this.driver, this.cardNumberField);
+		this.donationMethods.waitAndSwitchIntoPaymentIframe(this.driver, this.paymentIframe);
 		this.donationMethods.fillTextBox(this.driver, this.cardNumberField, this.card);
 		this.donationMethods.fillTextBox(this.driver, this.expiryDateField, this.expiryDate);
 		this.donationMethods.fillTextBox(this.driver, this.cvvField, this.cvv);
-		wait.until(ExpectedConditions.elementToBeClickable(By.id("paymentbuttontext")));
+		this.donationMethods.waitUntilSubmitPaymentButtonIsClickable(this.driver, this.submitDonationButton);
 		this.donationMethods.clickOnSubmitDonation(this.driver, this.submitDonationButton);
-		
+		this.donationMethods.switchBackFromPaymentIframe(this.driver);
 	}
 
 
 	@Then("the donation has been performed")
 	public void the_donation_has_been_performed() {
-		this.donationMethods.waitUntilErrorDonationMessageIsShown(driver, paymentErrorMessage);
+		this.donationMethods.waitUntilPaymentIsPerformed(this.driver, this.tryAgain);
+		this.referenceNumber = this.donationMethods.storePaymentReference(this.driver, this.referenceNumber);
+		this.donationMethods.printRefNumber(this.referenceNumber);
 		this.helper.closeDriver(this.driver);
 	}
+	
+	
 }

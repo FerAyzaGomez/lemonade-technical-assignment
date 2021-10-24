@@ -12,12 +12,14 @@ public class SearchMethods {
 	Helpers helper = new Helpers();
 
 	public void fillSearchTextBox(WebDriver driver, String searchBoxId, String textToSearch) {
-		driver.findElement(By.id(searchBoxId)).sendKeys(textToSearch);
+		this.helper.fillTextBoxById(driver, searchBoxId, textToSearch);
+		//driver.findElement(By.id(searchBoxId)).sendKeys(textToSearch);
 	}
 	
 	
 	public void clickOnSearchButton(WebDriver driver, String searchButtonId) {
-		driver.findElement(By.id(searchButtonId)).click();
+		this.helper.clickOnElementbyId(driver, searchButtonId);
+		//driver.findElement(By.id(searchButtonId)).click();
 	}
 	
 	
